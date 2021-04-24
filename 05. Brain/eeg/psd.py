@@ -58,6 +58,9 @@ def _slice_process(index, array):
             index[0],
             _float_slice(index[1], array)
         )
+        print(f"{index_new[1].start=}")
+        print(f"{index_new[1].stop=}")
+        print(f"{index_new[1].step=}")
     elif isinstance(index, slice):
         index_new = _float_slice(index, array)
     elif isinstance(index, float):
@@ -94,6 +97,7 @@ class PSD(metaclass=abc.ABCMeta):
         self.nfft = nfft
         self.f = None
         self.psd = None
+        self._f_delta = None
         
     def __len__(self):
         return self.psd.shape
@@ -109,9 +113,15 @@ class PSD(metaclass=abc.ABCMeta):
         features = []
         for k in columns:
             domain = wave_info[k][0]
+            # TODO: whthere add index[2]=1
             x, y = self[:, domain[0]:domain[1]]
             features.append(np.sum(y, axis=1))
         return columns, np.vstack(features).T
+    
+    @property
+    def f_d(self):
+        if self._f_delta is None:
+            self._f_delta = self.f[1]
         
     @abc.abstractmethod
     def transform(self):

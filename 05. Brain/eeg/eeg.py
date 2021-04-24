@@ -40,9 +40,9 @@ class EEGMeta(metaclass=abc.ABCMeta):
 class EEG(EEGMeta, EEGViewerMixIn):
     def __init__(self, data, labels, psd_opt=dict()):
         super().__init__(data, labels)
-        
+
         psd_opt = psd_default_opt | psd_opt
-        
+
         self.psd = psd_general(
             x=self.data,
             **psd_opt,
@@ -53,10 +53,10 @@ class EEG(EEGMeta, EEGViewerMixIn):
         if self._features is None:
             self._columns, self._features = self.psd.get_features()
         return self._features
-    
+
     def to_pandas(self, log_scale=False):
         if log_scale is True:
-            features = np.log10(self.features) 
+            features = np.log10(self.features)
         else:
             features = self.features
         features = pd.DataFrame(
